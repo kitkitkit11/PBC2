@@ -86,7 +86,6 @@ namespace PBC {
 			this->srcFile_txt->Name = L"srcFile_txt";
 			this->srcFile_txt->Size = System::Drawing::Size(470, 23);
 			this->srcFile_txt->TabIndex = 1;
-			this->srcFile_txt->TextChanged += gcnew System::EventHandler(this, &MainForm::textBox1_TextChanged);
 			// 
 			// srcFile_lbl
 			// 
@@ -147,6 +146,7 @@ namespace PBC {
 			this->archFile_btn->TabIndex = 6;
 			this->archFile_btn->Text = L"Open";
 			this->archFile_btn->UseVisualStyleBackColor = false;
+			this->archFile_btn->Click += gcnew System::EventHandler(this, &MainForm::archFile_btn_Click);
 			// 
 			// compress_btn
 			// 
@@ -233,16 +233,22 @@ namespace PBC {
 
 		}
 #pragma endregion
-	private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-	}
+	
 private: System::Void srcFile_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 	// OPEN FILE FOR COMPRESSION
-	OpenFileDialog^ openfiled = gcnew OpenFileDialog;
-	openfiled->ShowDialog();
-
-	// FILENAME IN TXTFIELD
-
+	OpenFileDialog^ openfilec = gcnew OpenFileDialog;
+	openfilec->ShowDialog();
+	srcFile_txt->Text = openfilec->FileName;					// Put srcFile path into txtField
 
 }
+
+private: System::Void archFile_btn_Click(System::Object^  sender, System::EventArgs^  e) {
+	// OPEN FILE FOR DECOMPRESSION
+	OpenFileDialog^ openfiled = gcnew OpenFileDialog;
+	openfiled->Filter = "Zip Files|*.zip;*.rar";				// Apply filter - only archive files
+	openfiled->ShowDialog();
+	archFile_txt->Text = openfiled->FileName;					// Put archFile path into txtField
+}
+
 };
 }

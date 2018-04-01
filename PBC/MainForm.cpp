@@ -10,4 +10,5 @@ void main(array<String^>^ args) {
 	Application::SetCompatibleTextRenderingDefault(false);
 	PBC::MainForm form;
 	Application::Run(%form);
+
 }

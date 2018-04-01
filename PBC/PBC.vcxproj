@@ -105,6 +105,9 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies />
+      <SubSystem>
+      </SubSystem>
+      <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
