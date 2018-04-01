@@ -52,19 +52,6 @@ namespace PBC {
 	private: System::Windows::Forms::RichTextBox^  msg_txt;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	private:
 		/// <summary>
 		/// Required designer variable.
@@ -253,6 +240,7 @@ private: System::Void srcFile_btn_Click(System::Object^  sender, System::EventAr
 	OpenFileDialog^ openfiled = gcnew OpenFileDialog;
 	openfiled->ShowDialog();
 
+	// FILENAME IN TXTFIELD
 
 
 }
