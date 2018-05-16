@@ -1,5 +1,33 @@
 #pragma once
 
+#include <string>
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include "Predictors.h"
+
+// An unsigned char can store 1 Bytes (8bits) of data (0-255)
+typedef unsigned char BYTE;
+
+BYTE *fileBuf;          // Pointer to our buffered data
+FILE *file = NULL;      // File pointer
+long fileSize;			// File size
+
+// Get the size of a file
+long getFileSize(FILE *file)
+{
+		long lCurPos, lEndPos;
+		lCurPos = ftell(file);
+		fseek(file, 0, 2);
+		lEndPos = ftell(file);
+		fseek(file, lCurPos, 0);
+		return lEndPos;
+}
+
+
 namespace PBC {
 
 	using namespace System;
@@ -8,8 +36,8 @@ namespace PBC {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
-
+	using namespace System::IO;
+	using namespace System::Runtime::InteropServices;
 
 	/// <summary>
 	/// Summary for MainForm
@@ -52,7 +80,7 @@ namespace PBC {
 	private: System::Windows::Forms::Button^  details_btn;
 	private: System::Windows::Forms::Button^  test_btn;
 	private: System::Windows::Forms::RichTextBox^  msg_txt;
-
+			 
 
 	private:
 		/// <summary>
@@ -82,22 +110,19 @@ namespace PBC {
 			// 
 			// srcFile_txt
 			// 
-			this->srcFile_txt->BackColor = System::Drawing::Color::AliceBlue;
 			this->srcFile_txt->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->srcFile_txt->ForeColor = System::Drawing::SystemColors::WindowText;
 			this->srcFile_txt->Location = System::Drawing::Point(110, 13);
 			this->srcFile_txt->Name = L"srcFile_txt";
 			this->srcFile_txt->Size = System::Drawing::Size(470, 23);
 			this->srcFile_txt->TabIndex = 1;
-			this->srcFile_txt->TextChanged += gcnew System::EventHandler(this, &MainForm::srcFile_txt_TextChanged);
 			// 
 			// srcFile_lbl
 			// 
 			this->srcFile_lbl->AutoSize = true;
 			this->srcFile_lbl->Font = (gcnew System::Drawing::Font(L"Georgia", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->srcFile_lbl->ForeColor = System::Drawing::SystemColors::GrayText;
+			this->srcFile_lbl->ForeColor = System::Drawing::SystemColors::ControlLightLight;
 			this->srcFile_lbl->Location = System::Drawing::Point(18, 15);
 			this->srcFile_lbl->Name = L"srcFile_lbl";
 			this->srcFile_lbl->Size = System::Drawing::Size(82, 17);
@@ -123,7 +148,7 @@ namespace PBC {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Georgia", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label1->ForeColor = System::Drawing::SystemColors::GrayText;
+			this->label1->ForeColor = System::Drawing::SystemColors::ControlLightLight;
 			this->label1->Location = System::Drawing::Point(12, 46);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(88, 17);
@@ -132,15 +157,12 @@ namespace PBC {
 			// 
 			// archFile_txt
 			// 
-			this->archFile_txt->BackColor = System::Drawing::Color::MintCream;
 			this->archFile_txt->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->archFile_txt->ForeColor = System::Drawing::SystemColors::WindowText;
 			this->archFile_txt->Location = System::Drawing::Point(110, 43);
 			this->archFile_txt->Name = L"archFile_txt";
 			this->archFile_txt->Size = System::Drawing::Size(470, 23);
 			this->archFile_txt->TabIndex = 5;
-			this->archFile_txt->TextChanged += gcnew System::EventHandler(this, &MainForm::archFile_txt_TextChanged);
 			// 
 			// archFile_btn
 			// 
@@ -159,12 +181,9 @@ namespace PBC {
 			// compress_btn
 			// 
 			this->compress_btn->BackColor = System::Drawing::Color::AliceBlue;
-			this->compress_btn->Enabled = false;
-			this->compress_btn->FlatAppearance->MouseDownBackColor = System::Drawing::Color::SteelBlue;
 			this->compress_btn->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
 			this->compress_btn->Font = (gcnew System::Drawing::Font(L"Georgia", 8.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->compress_btn->ForeColor = System::Drawing::Color::SteelBlue;
 			this->compress_btn->Location = System::Drawing::Point(110, 72);
 			this->compress_btn->Name = L"compress_btn";
 			this->compress_btn->Size = System::Drawing::Size(110, 40);
@@ -175,13 +194,10 @@ namespace PBC {
 			// 
 			// decompress_btn
 			// 
-			this->decompress_btn->BackColor = System::Drawing::Color::MintCream;
-			this->decompress_btn->Enabled = false;
-			this->decompress_btn->FlatAppearance->MouseDownBackColor = System::Drawing::Color::SeaGreen;
+			this->decompress_btn->BackColor = System::Drawing::Color::AliceBlue;
 			this->decompress_btn->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
 			this->decompress_btn->Font = (gcnew System::Drawing::Font(L"Georgia", 8.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->decompress_btn->ForeColor = System::Drawing::Color::SeaGreen;
 			this->decompress_btn->Location = System::Drawing::Point(230, 72);
 			this->decompress_btn->Name = L"decompress_btn";
 			this->decompress_btn->Size = System::Drawing::Size(110, 40);
@@ -193,12 +209,9 @@ namespace PBC {
 			// details_btn
 			// 
 			this->details_btn->BackColor = System::Drawing::Color::Beige;
-			this->details_btn->Enabled = false;
-			this->details_btn->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Olive;
 			this->details_btn->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
 			this->details_btn->Font = (gcnew System::Drawing::Font(L"Georgia", 8.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->details_btn->ForeColor = System::Drawing::Color::Olive;
 			this->details_btn->Location = System::Drawing::Point(350, 72);
 			this->details_btn->Name = L"details_btn";
 			this->details_btn->Size = System::Drawing::Size(110, 40);
@@ -210,12 +223,9 @@ namespace PBC {
 			// test_btn
 			// 
 			this->test_btn->BackColor = System::Drawing::Color::SeaShell;
-			this->test_btn->Enabled = false;
-			this->test_btn->FlatAppearance->MouseDownBackColor = System::Drawing::Color::Sienna;
 			this->test_btn->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
 			this->test_btn->Font = (gcnew System::Drawing::Font(L"Georgia", 8.5F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->test_btn->ForeColor = System::Drawing::Color::Sienna;
 			this->test_btn->Location = System::Drawing::Point(470, 72);
 			this->test_btn->Name = L"test_btn";
 			this->test_btn->Size = System::Drawing::Size(110, 40);
@@ -226,10 +236,10 @@ namespace PBC {
 			// 
 			// msg_txt
 			// 
-			this->msg_txt->BackColor = System::Drawing::Color::Beige;
+			this->msg_txt->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
 			this->msg_txt->Location = System::Drawing::Point(110, 119);
 			this->msg_txt->Name = L"msg_txt";
-			this->msg_txt->ReadOnly = true;
 			this->msg_txt->Size = System::Drawing::Size(470, 255);
 			this->msg_txt->TabIndex = 11;
 			this->msg_txt->Text = L"";
@@ -239,7 +249,7 @@ namespace PBC {
 			this->AccessibleRole = System::Windows::Forms::AccessibleRole::Application;
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackColor = System::Drawing::SystemColors::Menu;
+			this->BackColor = System::Drawing::Color::Black;
 			this->ClientSize = System::Drawing::Size(684, 386);
 			this->Controls->Add(this->msg_txt);
 			this->Controls->Add(this->test_btn);
@@ -252,106 +262,135 @@ namespace PBC {
 			this->Controls->Add(this->srcFile_btn);
 			this->Controls->Add(this->srcFile_lbl);
 			this->Controls->Add(this->srcFile_txt);
-			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Fixed3D;
-			this->HelpButton = true;
-			this->MaximizeBox = false;
-			this->MinimizeBox = false;
 			this->Name = L"MainForm";
-			this->Text = L"PBC";
-			this->TransparencyKey = System::Drawing::Color::Gray;
+			this->Text = L"MainForm";
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
-	
+
+//private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {}
+//private: System::Void src_TextChanged(System::Object^  sender, System::EventArgs^  e) {}
+
+
+		
+
 private: System::Void srcFile_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 	// OPEN FILE FOR COMPRESSION
-	OpenFileDialog^ openfilec = gcnew OpenFileDialog;
-	openfilec->ShowDialog();
-	srcFile_txt->Text = openfilec->FileName;					// Put srcFile path into txtField
-
+	OpenFileDialog^ openfiled = gcnew OpenFileDialog;
+	openfiled->ShowDialog();
+	srcFile_txt->Text = openfiled->FileName;
+	msg_txt->Text = "";
 }
 
 private: System::Void archFile_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 	// OPEN FILE FOR DECOMPRESSION
 	OpenFileDialog^ openfiled = gcnew OpenFileDialog;
-	openfiled->Filter = "Zip Files|*.zip;*.rar";				// Apply filter - only archive files
 	openfiled->ShowDialog();
-	archFile_txt->Text = openfiled->FileName;					// Put archFile path into txtField
+	archFile_txt->Text = openfiled->FileName;
+	msg_txt->Text = "";
 }
-		 /*
-			WHEN SRC FIELD AND ARCH FIELD GET PATHS -> ENABLE COMPRESS BUTTON
-		 */
-private: System::Void srcFile_txt_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (srcFile_txt->Text != "" && archFile_txt->Text != "") {
-		compress_btn->Enabled = true;
+		  //-----------------//
+		 // COMPRESS BUTTON //
+		//-----------------//
+private: System::Void compress_btn_Click(System::Object^  sender, System::EventArgs^  e) {
+	// GET FILE PATH
+	String^ fileName = srcFile_txt->Text;
+	std::string str1 = (const char*)(Marshal::StringToHGlobalAnsi(fileName)).ToPointer();
+	const char *filePath = str1.c_str();
+	if (this->srcFile_txt->Text->Length == 0) {
+		String^ Hour1 = System::DateTime::Now.Hour.ToString();
+		String^ Minute1 = System::DateTime::Now.Minute.ToString();
+		msg_txt->Text = Hour1 + ":" + Minute1 + " - Compression failed!\n First you need to chose a file for compression";
 	}
 	else {
-		compress_btn->Enabled = false;
-	}
-}
-		 /*
-			WHEN ARCH FIELD GET A PATH -> ENABLE DECOMPRESS, DETAILS, TEST BUTTONS
-			IF SRC PATH HAVE A PATH TO -> ENABLE COMPRESS BUTTON TOO
-		 */
-private: System::Void archFile_txt_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-	if (archFile_txt->Text != "") {
-		decompress_btn->Enabled = true;
-		details_btn->Enabled = true;
-		test_btn->Enabled = true;
-		if (srcFile_txt->Text != "") {
-			compress_btn->Enabled = true;
+		// if text field for compression is not empty
+		if ((file = fopen(filePath, "rb")) == NULL) {
+			String^ Hour2 = System::DateTime::Now.Hour.ToString();
+			String^ Minute2 = System::DateTime::Now.Minute.ToString();
+			msg_txt->Text = Hour2 + ":" + Minute2 + " - Compression failed!\n Could not open specified file.";
 		}
 		else {
-			compress_btn->Enabled = false;
+			String^ Hour3 = System::DateTime::Now.Hour.ToString();
+			String^ Minute3 = System::DateTime::Now.Minute.ToString();
+			msg_txt->Text = Hour3 + ":" + Minute3 + " - File opened successfully.\nStarting Reading File ... \n\n";
+
+			// Get the size of the file in bytes
+			fileSize = getFileSize(file);
+			// Allocate space in the buffer for the whole file
+			fileBuf = new BYTE[fileSize];
+			// Read the file in to the buffer
+			fread(fileBuf, fileSize, 1, file);
+
+			Hour3 = System::DateTime::Now.Hour.ToString();
+			Minute3 = System::DateTime::Now.Minute.ToString();
+			msg_txt->Text = Hour3 + ":" + Minute3 + " - Finished Reading File ... \n Starting Compression ...\n\n";
+			int usedPreditors[2][10] = {0,1,2,3,4,5,6,7,8,9};
+			// Create class object for predictors functions
+			Predictors objC = Predictors(fileBuf, fileSize, usedPreditors);
+			std::string resultS = "";
+			for (int i = 0; i < 10; i++) {
+				resultS += objC.StrHexBin(fileBuf[i]);
+			}
+			msg_txt->Text += gcnew String(resultS.c_str());
+			System::Diagnostics::Debug::WriteLine(gcnew String(resultS.c_str()));
 		}
-	}
-	else {
-		decompress_btn->Enabled = false;
-		details_btn->Enabled = false;
-		test_btn->Enabled = false;
-		compress_btn->Enabled = false;
-	}
+	}	
 }
-
-		 /* 
-			COMPRESS BUTTON CLICK
-		 *	read file in byte format
-		 *	check for correct predictors
-		 *	put the best predictor and the stream length in PREDICTORS FILE
-		 *	put the residue and the initial data (having first length) in the RESIDUE FILE
-		 *	don't forget about the DETAILS FILE ( name, time, length, compression factor, checksums)
-		 */
-private: System::Void compress_btn_Click(System::Object^  sender, System::EventArgs^  e) {
-	
-
-
-}
-
-		 /* 
-			DECOMPRESS BUTTON CLICK
-		 *	read data from files (residue and predictors)
-		 *	restore the original file by checking used predictors and adding residue at the initial data
-		 */
+		   //-------------------//
+		  // DECOMPRESS BUTTON //
+		 //-------------------//
 private: System::Void decompress_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 
-}
 
-		 /* 
-			DETAILS BUTTON CLICK
-		 *	read data from details file
-		 */
+}
+		   //----------------//
+		  // DETAILS BUTTON //
+		 //----------------//
 private: System::Void details_btn_Click(System::Object^  sender, System::EventArgs^  e) {
+	if (this->srcFile_txt->Text->Length == 0) {
+		String^ Hour1 = System::DateTime::Now.Hour.ToString();
+		String^ Minute1 = System::DateTime::Now.Minute.ToString();
+		msg_txt->Text = Hour1 + ":" + Minute1 + " - Don't have a source file!\n\n";
+	}
+	else {
+		String^ Hour2 = System::DateTime::Now.Hour.ToString();
+		String^ Minute2 = System::DateTime::Now.Minute.ToString();
+		msg_txt->Text += Hour2 + ":" + Minute2 + " - Details for source file!\n\n";
+
+		// Name
+		msg_txt->Text += "\tName : " + srcFile_txt->Text + "\n";
+		//file size
+		msg_txt->Text += "\tSize : " + fileSize + "\n";
+	}
+	if (this->archFile_txt->Text->Length == 0) {
+		String^ Hour3 = System::DateTime::Now.Hour.ToString();
+		String^ Minute3 = System::DateTime::Now.Minute.ToString();
+		msg_txt->Text += "\n\n" + Hour3 + ":" + Minute3 + " - Don't have a archive file!\n\n";
+	}
+	else {
+		String^ Hour2 = System::DateTime::Now.Hour.ToString();
+		String^ Minute2 = System::DateTime::Now.Minute.ToString();
+		msg_txt->Text += "\n\n" + Hour2 + ":" + Minute2 + " - Details for archive file!\n\n";
+
+		//Name
+		msg_txt->Text += "\tName : " + archFile_txt->Text + "\n";
+		//containing files
+
+		//files size
+
+	}
 
 }
 
-		 /* 
-			TEST BUTTON CLICK
-		 *	compare checksums (after compression and calculated for decompressed file when this btn is clicked)
-		 */
+		   //-------------//
+		  // TEST BUTTON //
+		 //-------------//
 private: System::Void test_btn_Click(System::Object^  sender, System::EventArgs^  e) {
-
+	
 }
+
+
 };
 }
