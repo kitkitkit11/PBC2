@@ -9,6 +9,8 @@ namespace PBC {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
+
+
 	/// <summary>
 	/// Summary for MainForm
 	/// </summary>
@@ -277,9 +279,10 @@ private: System::Void archFile_btn_Click(System::Object^  sender, System::EventA
 	openfiled->Filter = "Zip Files|*.zip;*.rar";				// Apply filter - only archive files
 	openfiled->ShowDialog();
 	archFile_txt->Text = openfiled->FileName;					// Put archFile path into txtField
-	// ------------------------------------------------------- //
 }
-
+		 /*
+			WHEN SRC FIELD AND ARCH FIELD GET PATHS -> ENABLE COMPRESS BUTTON
+		 */
 private: System::Void srcFile_txt_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (srcFile_txt->Text != "" && archFile_txt->Text != "") {
 		compress_btn->Enabled = true;
@@ -288,7 +291,10 @@ private: System::Void srcFile_txt_TextChanged(System::Object^  sender, System::E
 		compress_btn->Enabled = false;
 	}
 }
-
+		 /*
+			WHEN ARCH FIELD GET A PATH -> ENABLE DECOMPRESS, DETAILS, TEST BUTTONS
+			IF SRC PATH HAVE A PATH TO -> ENABLE COMPRESS BUTTON TOO
+		 */
 private: System::Void archFile_txt_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 	if (archFile_txt->Text != "") {
 		decompress_btn->Enabled = true;
@@ -309,31 +315,41 @@ private: System::Void archFile_txt_TextChanged(System::Object^  sender, System::
 	}
 }
 
-		 // COMPRESS BUTTON CLICK
-		 // read file in byte format
-		 // check for correct predictors
-		 // put the best predictor and the stream length in PREDICTORS FILE
-		 // put the residue and the initial data (having first length) in the RESIDUE FILE
-		 // don't forget about the DETAILS FILE ( name, time, length, compression factor, checksums)
+		 /* 
+			COMPRESS BUTTON CLICK
+		 *	read file in byte format
+		 *	check for correct predictors
+		 *	put the best predictor and the stream length in PREDICTORS FILE
+		 *	put the residue and the initial data (having first length) in the RESIDUE FILE
+		 *	don't forget about the DETAILS FILE ( name, time, length, compression factor, checksums)
+		 */
 private: System::Void compress_btn_Click(System::Object^  sender, System::EventArgs^  e) {
+	
+
 
 }
 
-		 // DECOMPRESS BUTTON CLICK
-		 // read data from files (residue and predictors)
-		 // restore the original file by checking used predictors and adding residue at the initial data
+		 /* 
+			DECOMPRESS BUTTON CLICK
+		 *	read data from files (residue and predictors)
+		 *	restore the original file by checking used predictors and adding residue at the initial data
+		 */
 private: System::Void decompress_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 
 }
 
-		 // DETAILS BUTTON CLICK
-		 // read data from details file
+		 /* 
+			DETAILS BUTTON CLICK
+		 *	read data from details file
+		 */
 private: System::Void details_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 
 }
 
-		 // TEST BUTTON CLICK
-		 // compare checksums (after compression and calculated for decompressed file when this btn is clicked)
+		 /* 
+			TEST BUTTON CLICK
+		 *	compare checksums (after compression and calculated for decompressed file when this btn is clicked)
+		 */
 private: System::Void test_btn_Click(System::Object^  sender, System::EventArgs^  e) {
 
 }
