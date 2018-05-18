@@ -1,0 +1,9 @@
+ NEGAT : 01101110 - 00100000
+7 Rezult : 0
+6 Rezult : 1
+5 Rezult : 1
+4 Rezult : 1
+3 Rezult : 0
+2 Rezult : 0
+1 Rezult : 1
+0 Rezult : 0

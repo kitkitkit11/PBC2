@@ -322,19 +322,22 @@ private: System::Void compress_btn_Click(System::Object^  sender, System::EventA
 			fileBuf = new BYTE[fileSize];
 			// Read the file in to the buffer
 			fread(fileBuf, fileSize, 1, file);
-
-			Hour3 = System::DateTime::Now.Hour.ToString();
-			Minute3 = System::DateTime::Now.Minute.ToString();
-			msg_txt->Text = Hour3 + ":" + Minute3 + " - Finished Reading File ... \n Starting Compression ...\n\n";
-			int usedPreditors[2][10] = {0,1,2,3,4,5,6,7,8,9};
-			// Create class object for predictors functions
-			Predictors objC = Predictors(fileBuf, fileSize, usedPreditors);
-			std::string resultS = "";
-			for (int i = 0; i < 10; i++) {
-				resultS += objC.StrHexBin(fileBuf[i]);
+			if (fileSize > 0) {
+				Hour3 = System::DateTime::Now.Hour.ToString();
+				Minute3 = System::DateTime::Now.Minute.ToString();
+				msg_txt->Text += Hour3 + ":" + Minute3 + " - Finished Reading File ... \n Starting Compression ...\n\n";
+				// Create class object for predictors functions
+				Predictors objC = Predictors(fileBuf, fileSize);
+				std::string raspStr = objC.applyPred();
+				Hour3 = System::DateTime::Now.Hour.ToString();
+				Minute3 = System::DateTime::Now.Minute.ToString();
+				msg_txt->Text += Hour3 + ":" + Minute3 + " - " + gcnew String(raspStr.c_str());
 			}
-			msg_txt->Text += gcnew String(resultS.c_str());
-			System::Diagnostics::Debug::WriteLine(gcnew String(resultS.c_str()));
+			else {
+				Hour3 = System::DateTime::Now.Hour.ToString();
+				Minute3 = System::DateTime::Now.Minute.ToString();
+				msg_txt->Text += Hour3 + ":" + Minute3 + " - File has nullable length...\n\n";
+			}
 		}
 	}	
 }
